@@ -8,17 +8,30 @@ string mySqlConnection = builder.Configuration.GetConnectionString("SalesWebNet6
 builder.Services.AddDbContextPool<SalesWebNet6Context>(options =>
 options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddTransient<SeedingService>();
+// Add services to the container.
 var app = builder.Build();
 
+void SeedData(IHost app)
+{
+    var scopedService = app.Services.GetService<IServiceScopeFactory>();
+    using (var scoped = scopedService.CreateScope())
+    {
+        var service = scoped.ServiceProvider.GetService<SeedingService>();
+        service.Seed(); 
+    }
+}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+else
+{
+    SeedData(app);
 }
 
 app.UseHttpsRedirection();
