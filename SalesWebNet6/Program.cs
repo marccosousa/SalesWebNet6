@@ -1,9 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using MySqlConnector;
 using SalesWebNet6.Data;
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<SalesWebNet6Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SalesWebNet6Context") ?? throw new InvalidOperationException("Connection string 'SalesWebNet6Context' not found.")));
+
+string mySqlConnection = builder.Configuration.GetConnectionString("SalesWebNet6Context");
+builder.Services.AddDbContextPool<SalesWebNet6Context>(options =>
+options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
