@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SalesWebNet6.Models;
 using SalesWebNet6.Services;
 
 namespace SalesWebNet6.Controllers
@@ -16,6 +18,19 @@ namespace SalesWebNet6.Controllers
         {
             var list = _sellerService.FindAll(); 
             return View(list);
+        }
+
+        public IActionResult Create() 
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Seller seller)
+        {
+            _sellerService.Insert(seller);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
