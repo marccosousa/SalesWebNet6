@@ -13,6 +13,7 @@ options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<SeedingService>();
 builder.Services.AddTransient<SellerService>();
+builder.Services.AddTransient<DepartmentService>(); 
 // Add services to the container.
 var app = builder.Build();
 
