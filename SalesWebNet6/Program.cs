@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using MySqlConnector;
 using SalesWebNet6.Data;
+using SalesWebNet6.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 string mySqlConnection = builder.Configuration.GetConnectionString("SalesWebNet6Context");
@@ -10,6 +12,7 @@ options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<SeedingService>();
+builder.Services.AddTransient<SellerService>();
 // Add services to the container.
 var app = builder.Build();
 
