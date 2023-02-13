@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
 using SalesWebNet6.Models;
 using SalesWebNet6.Models.ViewModels;
 using SalesWebNet6.Services;
 using SalesWebNet6.Services.Exceptions;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace SalesWebNet6.Controllers
@@ -44,13 +46,13 @@ namespace SalesWebNet6.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new {Message = "ID NOT PROVIDED"}); 
             }
 
             var seller = _sellerService.FindById(id.Value);
             if (seller == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { Message = "ID NOT FOUND" });
             }
 
             return View(seller);
@@ -69,13 +71,13 @@ namespace SalesWebNet6.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { Message = "ID NOT PROVIDED" });
             }
 
             var seller = _sellerService.FindById(id.Value);
             if (seller == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { Message = "ID NOT FOUND" });
             }
 
             return View(seller);
@@ -85,13 +87,13 @@ namespace SalesWebNet6.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { Message = "ID NOT PROVIDED" });
             }
 
             var seller = _sellerService.FindById(id.Value);
             if (seller == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { Message = "ID NOT FOUND" });
             }
 
             List<Department> departments = _departmentService.FindAll();
@@ -105,21 +107,27 @@ namespace SalesWebNet6.Controllers
         {
             if(id != seller.Id)
             {
-                return BadRequest();
+                return RedirectToAction(nameof(Error), new { Message = "ID MISS MATCH" });
             }
             try
             {
                 _sellerService.Update(seller);
                 return RedirectToAction(nameof(Index));
             }
-            catch(NotFoundException e)
+            catch(ApplicationException e)
             {
-                return NotFound(); 
+                return RedirectToAction(nameof(Error), new { Message = e.Message });
             }
-            catch (DbConcurrencyException)
+        }
+
+        public IActionResult Error(string message)
+        {
+            var viewModel = new ErrorViewModel
             {
-                return BadRequest();
-            }
+                Message = message,
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            }; 
+            return View(viewModel);
         }
     }
 }
