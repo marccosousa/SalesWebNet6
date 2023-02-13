@@ -1,4 +1,5 @@
-﻿using SalesWebNet6.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using SalesWebNet6.Data;
 using SalesWebNet6.Models;
 
 namespace SalesWebNet6.Services
@@ -25,7 +26,7 @@ namespace SalesWebNet6.Services
 
         public Seller FindById (int id)
         {
-            return _context.Seller.FirstOrDefault(seller => seller.Id == id); 
+            return _context.Seller.Include(seller => seller.Department).FirstOrDefault(seller => seller.Id == id); 
         }
 
         public void Remove (int id) 
