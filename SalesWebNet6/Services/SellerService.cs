@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SalesWebNet6.Data;
 using SalesWebNet6.Models;
+using SalesWebNet6.Services.Exceptions;
 
 namespace SalesWebNet6.Services
 {
@@ -34,6 +35,23 @@ namespace SalesWebNet6.Services
             var seller = _context.Seller.Find(id); 
             _context.Seller.Remove(seller);
             _context.SaveChanges();
+        }
+
+        public void Update(Seller seller)
+        {
+            if(!_context.Seller.Any(x => x.Id == seller.Id))
+            {
+                throw new NotFoundException("Id not found"); 
+            }
+            try
+            {
+                _context.Update(seller);
+                _context.SaveChanges();
+            }
+            catch(DbUpdateConcurrencyException e)
+            {
+                throw new DbUpdateConcurrencyException(e.Message);
+            }
         }
     }
 }

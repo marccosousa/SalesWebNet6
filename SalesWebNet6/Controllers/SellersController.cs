@@ -3,13 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using SalesWebNet6.Models;
 using SalesWebNet6.Models.ViewModels;
 using SalesWebNet6.Services;
+using SalesWebNet6.Services.Exceptions;
 using System.Runtime.CompilerServices;
 
 namespace SalesWebNet6.Controllers
 {
     public class SellersController : Controller
     {
-        private readonly SellerService _sellerService; 
+        private readonly SellerService _sellerService;
         private readonly DepartmentService _departmentService;
 
         public SellersController(SellerService sellerService, DepartmentService departmentService)
@@ -20,11 +21,11 @@ namespace SalesWebNet6.Controllers
 
         public IActionResult Index()
         {
-            var list = _sellerService.FindAll(); 
+            var list = _sellerService.FindAll();
             return View(list);
         }
 
-        public IActionResult Create() 
+        public IActionResult Create()
         {
             var departments = _departmentService.FindAll();
             var viewModel = new SellerFormViewModel { Departments = departments };
@@ -41,13 +42,13 @@ namespace SalesWebNet6.Controllers
 
         public IActionResult Delete(int? id)
         {
-            if(id == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var seller = _sellerService.FindById(id.Value); 
-            if(seller == null)
+            var seller = _sellerService.FindById(id.Value);
+            if (seller == null)
             {
                 return NotFound();
             }
@@ -78,6 +79,47 @@ namespace SalesWebNet6.Controllers
             }
 
             return View(seller);
+        }
+
+        public IActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var seller = _sellerService.FindById(id.Value);
+            if (seller == null)
+            {
+                return NotFound();
+            }
+
+            List<Department> departments = _departmentService.FindAll();
+            SellerFormViewModel viewModel = new SellerFormViewModel { Seller = seller, Departments = departments };
+            return View(viewModel);
+        }
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, Seller seller)
+        {
+            if(id != seller.Id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                _sellerService.Update(seller);
+                return RedirectToAction(nameof(Index));
+            }
+            catch(NotFoundException e)
+            {
+                return NotFound(); 
+            }
+            catch (DbConcurrencyException)
+            {
+                return BadRequest();
+            }
         }
     }
 }
