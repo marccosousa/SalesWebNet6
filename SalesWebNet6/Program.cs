@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Localization; 
 using MySqlConnector;
 using SalesWebNet6.Data;
 using SalesWebNet6.Services;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,15 @@ builder.Services.AddTransient<DepartmentService>();
 // Add services to the container.
 var app = builder.Build();
 
+var enUS = new CultureInfo("en-US");
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(enUS),
+    SupportedCultures = new List<CultureInfo> { enUS },
+    SupportedUICultures = new List<CultureInfo> { enUS }
+}; 
+
+app.UseRequestLocalization(localizationOptions);
 void SeedData(IHost app)
 {
     var scopedService = app.Services.GetService<IServiceScopeFactory>();
