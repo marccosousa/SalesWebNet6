@@ -1,4 +1,5 @@
-﻿using SalesWebNet6.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using SalesWebNet6.Data;
 using SalesWebNet6.Models;
 
 namespace SalesWebNet6.Services
@@ -12,9 +13,9 @@ namespace SalesWebNet6.Services
             _context = context;
         }
 
-        public List<Department> FindAll()
+        public async Task<List<Department>> FindAllAsync()
         {
-            return _context.Department.OrderBy(x => x.Name).ToList();
+            return await _context.Department.OrderBy(x => x.Name).ToListAsync();
         }
     }
 }

@@ -24,8 +24,7 @@ namespace SalesWebNet6.Models
         [Range(100.00, 50000.00, ErrorMessage = "{0} must be from {1} to {2}")]
         [Display(Name = "Base Salary")]
         [DisplayFormat(DataFormatString = "{0:F2}")]
-        public double BaseSalary { get; set; }
-
+        public double BaseSalary { get; set; }    
         public Department Department { get; set; }
         public int DepartmentId { get; set; }
         public ICollection<SalesRecord> Sales { get; set; } = new List<SalesRecord>();
