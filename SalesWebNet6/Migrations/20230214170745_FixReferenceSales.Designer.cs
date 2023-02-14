@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SalesWebNet6.Data;
 
@@ -10,9 +11,11 @@ using SalesWebNet6.Data;
 namespace SalesWebNet6.Migrations
 {
     [DbContext(typeof(SalesWebNet6Context))]
-    partial class SalesWebNet6ContextModelSnapshot : ModelSnapshot
+    [Migration("20230214170745_FixReferenceSales")]
+    partial class FixReferenceSales
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,7 +98,7 @@ namespace SalesWebNet6.Migrations
                     b.HasOne("SalesWebNet6.Models.Seller", "Seller")
                         .WithMany("Sales")
                         .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Seller");
@@ -106,7 +109,7 @@ namespace SalesWebNet6.Migrations
                     b.HasOne("SalesWebNet6.Models.Department", "Department")
                         .WithMany("Sellers")
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Department");
